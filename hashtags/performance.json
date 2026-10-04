@@ -1,0 +1,307 @@
+{
+  "artist|instrumentalist|pianist|all|all india": {
+    "pianist": {
+      "runs": 1,
+      "matching_posts": 168,
+      "recent_posts": 93,
+      "unique_profiles": 107,
+      "india_signal_posts": 69,
+      "engagement": 7407,
+      "score": 0.7045,
+      "last_run_posts": 168,
+      "last_run_recent_posts": 93
+    },
+    "pianistindia": {
+      "runs": 1,
+      "matching_posts": 19,
+      "recent_posts": 1,
+      "unique_profiles": 14,
+      "india_signal_posts": 19,
+      "engagement": 1734,
+      "score": 0.6864,
+      "last_run_posts": 19,
+      "last_run_recent_posts": 1
+    },
+    "indianpianist": {
+      "runs": 1,
+      "matching_posts": 127,
+      "recent_posts": 0,
+      "unique_profiles": 25,
+      "india_signal_posts": 127,
+      "engagement": 9245,
+      "score": 0.8,
+      "last_run_posts": 127,
+      "last_run_recent_posts": 0
+    },
+    "hindipianist": {
+      "runs": 1,
+      "matching_posts": 1,
+      "recent_posts": 0,
+      "unique_profiles": 1,
+      "india_signal_posts": 0,
+      "engagement": 72,
+      "score": 0.0662,
+      "last_run_posts": 1,
+      "last_run_recent_posts": 0
+    },
+    "bollywoodpianist": {
+      "runs": 1,
+      "matching_posts": 100,
+      "recent_posts": 0,
+      "unique_profiles": 34,
+      "india_signal_posts": 100,
+      "engagement": 4846,
+      "score": 0.7996,
+      "last_run_posts": 100,
+      "last_run_recent_posts": 0
+    },
+    "pianistbooking": {
+      "runs": 1,
+      "matching_posts": 6,
+      "recent_posts": 0,
+      "unique_profiles": 4,
+      "india_signal_posts": 0,
+      "engagement": 253,
+      "score": 0.135,
+      "last_run_posts": 6,
+      "last_run_recent_posts": 0
+    },
+    "instrumentalistindia": {
+      "runs": 1,
+      "matching_posts": 0,
+      "recent_posts": 0,
+      "unique_profiles": 0,
+      "india_signal_posts": 0,
+      "engagement": 0,
+      "score": 0.0033,
+      "last_run_posts": 0,
+      "last_run_recent_posts": 0
+    },
+    "livemusicianindia": {
+      "runs": 1,
+      "matching_posts": 1,
+      "recent_posts": 1,
+      "unique_profiles": 1,
+      "india_signal_posts": 1,
+      "engagement": 3,
+      "score": 0.5821,
+      "last_run_posts": 1,
+      "last_run_recent_posts": 1
+    },
+    "musicbooking": {
+      "runs": 1,
+      "matching_posts": 99,
+      "recent_posts": 40,
+      "unique_profiles": 35,
+      "india_signal_posts": 2,
+      "engagement": 5111,
+      "score": 0.5379,
+      "last_run_posts": 99,
+      "last_run_recent_posts": 40
+    }
+  },
+  "artist|live band|bollywood|hindi|all india": {
+    "bollywood": {
+      "runs": 1,
+      "matching_posts": 126,
+      "recent_posts": 115,
+      "unique_profiles": 113,
+      "india_signal_posts": 126,
+      "engagement": 4973,
+      "score": 0.9825,
+      "last_run_posts": 126,
+      "last_run_recent_posts": 115
+    },
+    "bollywoodsinger": {
+      "runs": 1,
+      "matching_posts": 104,
+      "recent_posts": 98,
+      "unique_profiles": 92,
+      "india_signal_posts": 104,
+      "engagement": 28917,
+      "score": 0.9885,
+      "last_run_posts": 104,
+      "last_run_recent_posts": 98
+    },
+    "bollywoodmusic": {
+      "runs": 1,
+      "matching_posts": 145,
+      "recent_posts": 133,
+      "unique_profiles": 115,
+      "india_signal_posts": 145,
+      "engagement": 5050,
+      "score": 0.9834,
+      "last_run_posts": 145,
+      "last_run_recent_posts": 133
+    },
+    "bollywoodlive": {
+      "runs": 1,
+      "matching_posts": 101,
+      "recent_posts": 51,
+      "unique_profiles": 67,
+      "india_signal_posts": 101,
+      "engagement": 22070,
+      "score": 0.901,
+      "last_run_posts": 101,
+      "last_run_recent_posts": 51
+    },
+    "bollywoodartist": {
+      "runs": 1,
+      "matching_posts": 97,
+      "recent_posts": 8,
+      "unique_profiles": 59,
+      "india_signal_posts": 97,
+      "engagement": 12612,
+      "score": 0.8165,
+      "last_run_posts": 97,
+      "last_run_recent_posts": 8
+    },
+    "livebandindia": {
+      "runs": 1,
+      "matching_posts": 100,
+      "recent_posts": 32,
+      "unique_profiles": 19,
+      "india_signal_posts": 100,
+      "engagement": 12264,
+      "score": 0.8515,
+      "last_run_posts": 100,
+      "last_run_recent_posts": 32
+    },
+    "eventbandindia": {
+      "runs": 1,
+      "matching_posts": 3,
+      "recent_posts": 0,
+      "unique_profiles": 3,
+      "india_signal_posts": 3,
+      "engagement": 68,
+      "score": 0.4472,
+      "last_run_posts": 3,
+      "last_run_recent_posts": 0
+    },
+    "bandbooking": {
+      "runs": 1,
+      "matching_posts": 92,
+      "recent_posts": 33,
+      "unique_profiles": 63,
+      "india_signal_posts": 15,
+      "engagement": 1659,
+      "score": 0.5659,
+      "last_run_posts": 92,
+      "last_run_recent_posts": 33
+    }
+  },
+  "actor|matt damon|all|english|all india": {
+    "mattdamon": {
+      "runs": 5,
+      "matching_posts": 480,
+      "recent_posts": 479,
+      "unique_profiles": 385,
+      "india_signal_posts": 1,
+      "engagement": 182153,
+      "score": 0.9996,
+      "last_run_posts": 96,
+      "last_run_recent_posts": 96
+    }
+  },
+  "artist|dj|edm|all|north": {
+    "edm": {
+      "runs": 1,
+      "matching_posts": 54,
+      "recent_posts": 22,
+      "unique_profiles": 19,
+      "india_signal_posts": 4,
+      "engagement": 2735,
+      "score": 0.5378,
+      "last_run_posts": 54,
+      "last_run_recent_posts": 22
+    },
+    "edmindia": {
+      "runs": 1,
+      "matching_posts": 111,
+      "recent_posts": 30,
+      "unique_profiles": 73,
+      "india_signal_posts": 111,
+      "engagement": 24713,
+      "score": 0.8541,
+      "last_run_posts": 111,
+      "last_run_recent_posts": 30
+    },
+    "edmdj": {
+      "runs": 1,
+      "matching_posts": 98,
+      "recent_posts": 61,
+      "unique_profiles": 49,
+      "india_signal_posts": 0,
+      "engagement": 4944,
+      "score": 0.5744,
+      "last_run_posts": 98,
+      "last_run_recent_posts": 61
+    },
+    "electronicmusicindia": {
+      "runs": 1,
+      "matching_posts": 95,
+      "recent_posts": 19,
+      "unique_profiles": 41,
+      "india_signal_posts": 95,
+      "engagement": 47473,
+      "score": 0.84,
+      "last_run_posts": 95,
+      "last_run_recent_posts": 19
+    },
+    "djindia": {
+      "runs": 1,
+      "matching_posts": 100,
+      "recent_posts": 99,
+      "unique_profiles": 79,
+      "india_signal_posts": 100,
+      "engagement": 18895,
+      "score": 0.998,
+      "last_run_posts": 100,
+      "last_run_recent_posts": 99
+    },
+    "eventdj": {
+      "runs": 1,
+      "matching_posts": 111,
+      "recent_posts": 109,
+      "unique_profiles": 90,
+      "india_signal_posts": 8,
+      "engagement": 1611,
+      "score": 0.6583,
+      "last_run_posts": 111,
+      "last_run_recent_posts": 109
+    },
+    "djbooking": {
+      "runs": 1,
+      "matching_posts": 103,
+      "recent_posts": 103,
+      "unique_profiles": 76,
+      "india_signal_posts": 14,
+      "engagement": 2017,
+      "score": 0.6869,
+      "last_run_posts": 103,
+      "last_run_recent_posts": 103
+    },
+    "northedm": {
+      "runs": 1,
+      "matching_posts": 12,
+      "recent_posts": 0,
+      "unique_profiles": 1,
+      "india_signal_posts": 0,
+      "engagement": 597,
+      "score": 0.1276,
+      "last_run_posts": 12,
+      "last_run_recent_posts": 0
+    },
+    "edmnorth": {
+      "runs": 1,
+      "matching_posts": 22,
+      "recent_posts": 0,
+      "unique_profiles": 9,
+      "india_signal_posts": 0,
+      "engagement": 792,
+      "score": 0.2642,
+      "last_run_posts": 22,
+      "last_run_recent_posts": 0
+    }
+  }
+}

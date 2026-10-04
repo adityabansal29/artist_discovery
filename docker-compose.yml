@@ -1,0 +1,17 @@
+services:
+  dashboard:
+    build: .
+    image: artist-research-dashboard
+    ports:
+      - "8780:8780"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8780
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+      APIFY_API_TOKEN: ${APIFY_API_TOKEN:-}
+      REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
+      REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
+    volumes:
+      - ./outputs:/app/outputs
+      - ./hashtags:/app/hashtags
+    restart: unless-stopped
