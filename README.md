@@ -1,17 +1,179 @@
-# Artist and Actor Research V0
+# Artist Discovery and Research
 
-File-based research prototype for Indian artist discovery and configurable
-movie-actor research.
+Artist Discovery is a file-based research system for finding Indian artists,
+tracking their recent activity, and building evidence-backed profiles. It also
+supports configurable movie-actor research across languages, markets, and
+film industries.
 
-## Run the sanity check
+The project is designed for discovery and research—not automated outreach. It
+uses public information, preserves the evidence collected for each run, and
+keeps uncertain claims clearly separated from confirmed findings.
+
+## Objective
+
+The system answers questions such as:
+
+- Which singers, DJs, bands, comedians, dancers, speakers, influencers, and
+  other artists are relevant for a location, category, and genre?
+- Which candidates show measurable activity inside the recent research window?
+- What official profiles, public booking links, and publicly listed contacts
+  can be verified?
+- Which movie actors are relevant to a selected language, market, or industry,
+  and what current projects or activity support that conclusion?
+
+Every research run produces both a readable report and structured JSON so the
+results can be reviewed manually, displayed in the dashboard, or consumed by
+future tooling.
+
+## How it is implemented
+
+The application is a small Python pipeline with a command-line runner and a
+dependency-light local dashboard.
+
+1. **Build the research brief**
+
+   A request specifies the research kind (`artist` or `actor`), location or
+   market, language, category, genre, refresh mode, and sources. The runner
+   turns those inputs into deterministic search queries. Artist requests also
+   select focused Instagram hashtags using the category, genre, and location.
+
+2. **Collect direct-source evidence**
+
+   - Instagram and YouTube are collected through Apify actors.
+   - Reddit is collected through OAuth when credentials are available, with a
+     public JSON fallback.
+   - Web and X are queued for the Claude research phase.
+
+   Direct collectors retain the complete raw response, deduplicate candidates,
+   and select a bounded batch for enrichment. Previously processed profiles and
+   Reddit posts are tracked so later runs can focus on new or refreshable data.
+
+3. **Run Web/X research**
+
+   When Web or X is selected, the runner gives Claude the saved direct-source
+   evidence and research brief. Claude writes the Web/X evidence back into the
+   run directory, including warnings when a source could not be accessed.
+
+4. **Synthesize findings**
+
+   A separate Claude phase reads the direct evidence and Web/X results. It
+   writes a human-readable `findings.md` report and a structured `findings.json`
+   file containing profiles, contacts, source yield, and warnings.
+
+5. **Persist reusable profiles**
+
+   Successful findings are merged into cumulative artist or actor profiles.
+   Each entity keeps its current profile, activity snapshots, and source links,
+   while each run remains available as an independent audit record.
+
+6. **Review in the dashboard**
+
+   The local dashboard launches new runs and displays source yield, candidate
+   profiles, trend signals, contacts, warnings, raw evidence, and saved reports.
+
+## Research flow
+
+```mermaid
+flowchart TD
+    A[Research brief] --> B[Build queries and hashtags]
+    B --> C[Collect Instagram, YouTube, Reddit]
+    C --> D[Save raw evidence]
+    D --> E[Deduplicate, enrich, and select batches]
+    E --> F[Save compact Claude input]
+    F --> G[Claude Web and X research]
+    G --> H[Claude findings synthesis]
+    H --> I[Write findings.md and findings.json]
+    I --> J[Update cumulative entity profiles]
+    I --> K[Review in local dashboard]
+```
+
+## Outputs
+
+Generated data is stored locally under `outputs/`. These files are intentionally
+ignored by Git because they can contain large research results and run-specific
+data.
+
+```text
+outputs/
+├── runs/
+│   └── <YYYYMMDD_HHMMSS>/
+│       ├── run_metadata.json          # Inputs, status, queries, source state
+│       ├── apify_data.json            # Complete direct-source collector data
+│       ├── claude_input.json          # Compact evidence sent to Claude
+│       ├── web_data.json              # Web evidence, when Web is selected
+│       ├── x_data.json                # X evidence, when X is selected
+│       ├── web_research_prompt.md     # Prompt used for Web/X research
+│       ├── research_prompt.md         # Prompt used for findings synthesis
+│       ├── findings.md                # Readable final report
+│       ├── findings.json              # Structured final findings
+│       ├── progress.log               # Run-level progress log
+│       └── *_claude_debug.log         # Claude diagnostics, when available
+├── entities/
+│   ├── artists/<slug>/
+│   │   ├── profile.json               # Cumulative normalized profile
+│   │   ├── activity.json              # Historical activity snapshots
+│   │   └── sources.json               # Discovered source links
+│   └── actors/<slug>/
+│       ├── profile.json
+│       ├── activity.json
+│       └── sources.json
+└── reddit_content_index.json          # Cross-run Reddit deduplication
+```
+
+The `hashtags/performance.json` file stores hashtag performance by research
+context. It is used to balance proven hashtags with a small amount of
+exploration in future artist runs.
+
+### What the final report contains
+
+Depending on the research kind and available evidence, findings can include:
+
+- identity and biography;
+- official profiles and source URLs;
+- services, genres, filmography, or upcoming projects;
+- dated videos, posts, news, and activity summaries;
+- trend status and supporting evidence;
+- publicly listed business or management contacts;
+- source yield and warnings explaining gaps in the result.
+
+The system does not infer missing contact details, dates, URLs, awards, or
+metrics. A candidate without dated evidence is marked as discovered with trend
+status unverified rather than being labelled trending.
+
+## Setup
+
+### Requirements
+
+- Python 3.12 or newer is recommended.
+- A Claude Code CLI installation that is authenticated for WebSearch and report
+  generation.
+- An Apify API token for Instagram and YouTube collection.
+- Optional Reddit OAuth credentials.
+
+### Local installation
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python self_check.py
+cp .env.example .env
 ```
 
-## Run artist research
+Add credentials to `.env` as needed:
+
+```text
+CLAUDE_CODE_OAUTH_TOKEN=...
+APIFY_API_TOKEN=...
+REDDIT_CLIENT_ID=...
+REDDIT_CLIENT_SECRET=...
+```
+
+Keep `.env` private. It is excluded from Git.
+
+## Run research from the command line
+
+### Artist discovery
+
+Artists require an L1 category and an L2 genre. For example:
 
 ```bash
 .venv/bin/python main.py \
@@ -21,199 +183,86 @@ python3 -m venv .venv
   --category Singer \
   --genre Bollywood \
   --refresh-mode discovery \
-  --sources instagram,youtube,web,reddit,x
+  --sources instagram,youtube,web
 ```
 
-## Run actor research
+### Actor research
+
+Actor research can be broad or focused on a specific actor or movie:
 
 ```bash
 .venv/bin/python main.py \
   --kind actor \
   --language Hindi \
   --market India \
+  --industry Bollywood \
   --sources instagram,youtube,web,reddit,x
 ```
 
-The research runner requires the `claude` CLI to be installed and authenticated.
-Set `CLAUDE_CODE_OAUTH_TOKEN` in `.env` or export it before starting the
-dashboard. Do not set it together with `ANTHROPIC_API_KEY`.
-Instagram and YouTube use `APIFY_API_TOKEN`; Reddit uses OAuth credentials when
-available and otherwise tries the public JSON endpoint. Web and X are searched
-by the Claude research step. Each run writes direct platform data, Markdown,
-JSON, the generated prompt, metadata, and a log under `outputs/runs/`.
+The runner prints the run directory when collection begins. Open that directory
+to inspect the raw evidence, report, and logs.
 
-Use `--refresh-mode trend` for regular recent-activity checks, `discovery` for
-broader profile/contact enrichment, and `backfill` to refresh every candidate
-returned by the current search. Search collection still runs in every mode;
-refresh mode only controls which known profiles/channels are enriched again. Persistent
-profile snapshots are stored under `outputs/entities/`, while
-`outputs/reddit_content_index.json` stores Reddit post IDs for cross-run
-deduplication. Research activity is always evaluated over a fixed 30-day
-window; this is not a run input.
-
-Artist Instagram enrichment prioritizes India-confirmed candidates, then likely
-India candidates, then unknown candidates. Foreign candidates are used only
-when the requested batch cannot otherwise be filled. Actor enrichment remains
-market/language driven rather than India-only.
-
-Instagram hashtag performance is stored in `hashtags/performance.json`. Tags
-are scored per research context (kind, L1/L2, language, and location). A tag
-is suppressed only after `2` runs below the `0.25` score threshold; a small
-exploration set is retained so new tags can recover.
-
-## Start the dashboard
+## Run the dashboard
 
 ```bash
 .venv/bin/python dashboard_server.py
 ```
 
+Open <http://127.0.0.1:8780>. The dashboard can start artist or actor runs and
+display both the latest snapshot and the complete run archive.
+
 ## Run with Docker
 
-Keep credentials in the existing `.env` file, then start the dashboard:
+The container installs Python dependencies and the Claude Code CLI. Keep
+credentials in `.env`, then run:
 
 ```bash
 docker compose up -d --build
 docker compose logs -f dashboard
 ```
 
-Open `http://127.0.0.1:8780`. `outputs/` and `hashtags/` are mounted from the
-host, so run history and hashtag performance survive container rebuilds. The
-container installs the Claude Code CLI; provide `CLAUDE_CODE_OAUTH_TOKEN`,
-`APIFY_API_TOKEN`, and optional Reddit credentials through `.env`.
+Open <http://127.0.0.1:8780>. The compose file mounts `outputs/` and
+`hashtags/` from the host so run history and hashtag performance survive
+container rebuilds.
 
-Stop it with:
+Stop the dashboard with:
 
 ```bash
 docker compose down
 ```
 
-Open http://127.0.0.1:8780.
+## Refresh modes and source selection
 
-Before running similar research, review
-[`learnings/research_run_guidance.md`](learnings/research_run_guidance.md) for
-parameter recommendations and interpretation rules.
+- `discovery`: broad discovery and enrichment; the default.
+- `trend`: prioritize recently refreshed candidates.
+- `backfill`: refresh the known candidate set.
 
-V0 does not send email or WhatsApp messages, create public profiles, or persist
-data in a database.
+The research window for trend evaluation is fixed at 30 days. The default
+sources are Instagram, YouTube, and Web. Reddit and X are optional and can be
+added with `--sources`.
 
-## Sequential collection flow
+## Important limitations
 
-The collector code is split into `source_collectors/apify.py`,
-`instagram.py`, `youtube.py`, `reddit.py`, `web_x.py`, and `claude.py`. Static research
-rules remain in `prompts/artist_research.md` and `prompts/actor_research.md`;
-the dynamic Web/X and findings prompt builders are in
-`prompts/web_prompt.py` and `prompts/findings_prompt.py`. Every run follows
-the same sequence:
+- Results depend on the selected sources, API availability, rate limits, and
+  the quality of public profiles.
+- Web and X research requires the authenticated Claude CLI.
+- A source failure is recorded in the run instead of silently treated as proof
+  that no candidate exists.
+- Run reports are not automatically merged with one another. Cumulative entity
+  files are updated separately for longitudinal use.
+- This V0 does not send email or WhatsApp messages, create public profiles, or
+  persist data in a database.
 
-1. Build the source queries/hashtags from the dashboard or CLI parameters.
-2. Fetch the complete raw result set available to that collector.
-3. Save the raw direct-source data for audit in `apify_data.json`.
-4. Deduplicate within the current run.
-5. Check entity snapshots for refresh eligibility and the content index for
-   previously processed Reddit posts.
-6. Select the first batch for the source.
-7. Enrich new or refreshable profiles/channels where an Actor exists.
-8. Save the selected evidence in `claude_input.json`.
-9. Run the separate Claude Web/X phase; it performs searches and writes
-   `web_data.json` and `x_data.json`.
-10. Run the separate Claude synthesis phase; it reads the saved direct-source
-    and Web/X evidence and writes `findings.md` and `findings.json`.
-
-Current batch behavior:
+## Project structure
 
 ```text
-Instagram: 100 posts → 25 unique profile usernames → profile enrichment
-YouTube:   100 videos → 25 unique channels → channel-description enrichment
-Reddit:    search results → 50 unique posts → no profile enrichment
-Web/X:     query delegation → Claude Web/X phase → saved search results
+main.py                    # CLI entry point and run orchestration
+dashboard_server.py        # Local dashboard and run launcher
+collectors.py              # Source collection coordinator
+source_collectors/         # Instagram, YouTube, Reddit, Web/X, Claude adapters
+entity_profiles.py         # Cumulative artist and actor profile persistence
+config.py                  # Research defaults, limits, and taxonomies
+prompts/                   # Artist, actor, Web/X, and synthesis instructions
+hashtags/                  # Hashtag selection and performance tracking
+learnings/                 # Research guidance and operating notes
 ```
-
-The index is updated only after processing succeeds: Instagram after profile
-records return, YouTube after channel enrichment returns, and Reddit after its
-selected post batch is accepted. The complete raw results and the selected batch are intentionally separate.
-This means a later batch can be processed without losing the original source
-evidence. Each run creates its own findings files; findings from different
-runs are not automatically merged.
-`progress.log` is the single run-level operational log, including collector
-and Claude phase messages. Detailed Claude diagnostics are written to
-`web_claude_debug.log` and `findings_claude_debug.log`.
-
-## Instagram selection and result limits
-
-The pipeline has two different stages:
-
-1. **Post discovery:** the Instagram hashtag Actor returns posts for the
-   generated hashtags. The current V0 request uses `resultsLimit: 100` in
-   `collectors.py`. The raw returned posts are saved in `apify_data.json`.
-2. **Profile enrichment:** usernames are deduplicated from those posts and a
-   smaller batch is sent to the Instagram profile Actor. The current V0 sends
-   up to 25 previously unseen usernames, selecting hashtag coverage first and
-   then filling remaining slots by the strongest returned-post signal:
-
-   ```text
-   selection_score = likes + (2 * comments)
-   ```
-
-This is only a first-pass strategy. It can over-select popular accounts and
-miss Tier 2/3 artists. The intended next strategy is **stratified batching**:
-
-```text
-Example returned data:
-  100 posts
-   84 unique usernames
-    5 hashtags
-
-Batch size: 25
-
-Batch 1: select candidates across all 5 hashtags, prioritising one account
-         per hashtag before filling remaining slots by engagement.
-Batch 2: select the next unseen usernames using the same coverage rule.
-Batch 3: continue until the candidate pool is exhausted.
-```
-
-Each batch records its successfully enriched usernames in a persistent
-enrichment index. Future runs skip already-enriched usernames unless an
-explicit refresh is requested.
-This gives coverage across hashtags instead of repeatedly enriching the same
-top accounts. The hashtag counts are counts of posts returned by Apify, not
-Instagram's total search volume.
-
-### Does Apify need client-side pagination?
-
-No client rewrite is needed. `dataset(...).iterate_items()` already iterates
-through the completed dataset pages. To request more Instagram posts, change
-the Actor input (`resultsLimit`) or run additional hashtag batches. The
-application now requests `resultsLimit: 100`; changing that value changes the
-Actor request and does not require changing the Apify Python client.
-
-The important distinction is:
-
-- **Dataset pagination:** handled by the existing Apify client code.
-- **Actor result limit:** controlled by the Actor input and may cap how many
-  posts are produced in the first place.
-- **Profile batch size and uniqueness:** controlled by our application code,
-  not by Apify pagination.
-
-Increasing the post limit alone will not enrich every discovered account; the
-profile batch size and entity refresh rules must also be applied.
-
-## YouTube and Reddit batches
-
-The same run-level selection pattern now applies to the other direct sources:
-
-- **YouTube:** requests up to 100 results, deduplicates by channel ID (or
-  channel URL), classifies channels, enriches up to 25 new channels using
-  artist/agency/ecosystem/media quotas, and passes their public descriptions
-  and external links to Claude.
-- **Reddit:** requests up to 25 results per search call, keeps the complete
-  deduplicated raw result set, and passes up to 50 previously unseen posts to
-  Claude.
-- Instagram and YouTube refresh timestamps are stored in their entity files.
-  Reddit post IDs are tracked in `outputs/reddit_content_index.json`.
-
-Raw results remain in `apify_data.json`. `claude_input.json` contains the
-selected batch for YouTube/Reddit plus the Instagram evidence and enriched
-profiles. YouTube descriptions and links are included under
-`channel_profiles`. Claude writes one `findings.md` and one `findings.json` for
-that run;
-separate runs are not automatically merged.
