@@ -211,6 +211,19 @@ to inspect the raw evidence, report, and logs.
 Open <http://127.0.0.1:8780>. The dashboard can start artist or actor runs and
 display both the latest snapshot and the complete run archive.
 
+## Screenshots
+
+### Research workspace
+
+<img src="docs/screenshots/dashboard.png" alt="Artist Intel research workspace" width="49%">
+<img src="docs/screenshots/research-run.png" alt="Research run overview" width="49%">
+
+### Findings and profiles
+
+<img src="docs/screenshots/findings.png" alt="Research findings" width="49%">
+<img src="docs/screenshots/artist-profile.png" alt="Cumulative artist profile" width="49%">
+<img src="docs/screenshots/activity.png" alt="Profile activity and evidence" width="49%">
+
 ## Run with Docker
 
 The container installs Python dependencies and the Claude Code CLI. Keep
